@@ -1,7 +1,7 @@
 pipeline {
   agent any
 
-  stages {
+    stages {
       stage('Build Artifact') {
             steps {
               sh "mvn clean package -DskipTests=true"
@@ -9,8 +9,8 @@ pipeline {
           }
         } 
 
-    stage('Unit Tests') {
-      steps {
+      stage('Unit Tests') {
+        steps {
         sh "mvn test"
       }
     } 
@@ -25,24 +25,24 @@ pipeline {
           jacoco execPattern: 'target/jacoco.exec'
         }
       }
-       
-       stage('Docker Build and Push') {
-      steps {
-        withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
+    }
+ 
+    stage('Docker Build and Push') {
+        steps {
+          withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
           sh 'printenv'
           sh 'docker build -t antipalu/numeric-app:""$GIT_COMMIT"" .'
           sh 'docker push antipalu/numeric-app:""$GIT_COMMIT""'
-        }
       }
     }
-      
+  }
+
     stage('Kubernetes Deployment - DEV') {
       steps {
         withKubeConfig([credentialsId: 'kubeconfig']) {
           sh "sed -i 's#replace#antipalu/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
           sh "kubectl apply -f k8s_deployment_service.yaml"
-          }
-        } 
+        }
       } 
     }
   }
