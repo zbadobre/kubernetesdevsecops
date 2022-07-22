@@ -27,7 +27,7 @@ pipeline {
         }
       }
     }
-  
+       
        stage('Docker Build and Push') {
       steps {
         withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
@@ -35,6 +35,16 @@ pipeline {
           sh 'docker build -t antipalu/numeric-app:""$GIT_COMMIT"" .'
           sh 'docker push antipalu/numeric-app:""$GIT_COMMIT""'
         }
+      }
+    }
+
+ stage('Kubernetes Deployment - DEV') {
+    sh "kubectl apply -f k8s_deployment_service.yaml"
+        }     steps {
+        withKubeConfig([credentialsId: 'kubeconfig']) {
+          sh "sed -i 's#replace#siddharth67/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
+
+        }      
       } 
     } 
   }
