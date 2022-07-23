@@ -28,7 +28,6 @@ pipeline {
           sh 'printenv'
           sh 'docker build -t antipalu/numeric-app:""$GIT_COMMIT"" .'
           sh 'docker push antipalu/numeric-app:""$GIT_COMMIT""'
-        }
-      }
     }
- }
+  }
+}
