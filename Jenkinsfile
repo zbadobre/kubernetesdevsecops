@@ -12,7 +12,7 @@ pipeline {
 
     stage('Unit Tests - JUnit and JaCoCo') {
       steps {
-        sh "mvn test"
+      sh "mvn test"
       }
       post {
         always {
@@ -31,14 +31,4 @@ pipeline {
         }
       }
     }
-
-    stage('Kubernetes Deployment - DEV') {
-      steps {
-        withKubeConfig([credentialsId: 'kubeconfig']) {
-          sh "sed -i 's#replace#antipalu/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
-          sh "kubectl apply -f k8s_deployment_service.yaml"
-        }
-      }
-    }
-  }
-}
+ }
